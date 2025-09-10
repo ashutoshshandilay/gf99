@@ -21,7 +21,7 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
 
   if (!selectedGirl || !selectedPlan) return null;
 
-  const upiId = 'tbs@ptyes';
+  const upiId = 'ashutoshshandilay@ybl';
   const amount = selectedPlan.price;
   const transactionNote = `Payment for ${selectedPlan.name} - ${selectedGirl.name}`;
 
