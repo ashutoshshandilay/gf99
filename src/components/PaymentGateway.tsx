@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, CreditCard, Smartphone, Wallet, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Smartphone, ExternalLink } from 'lucide-react';
 import { Girl, SubscriptionPlan, PaymentMethod } from '../types';
 
 interface PaymentGatewayProps {
@@ -9,19 +9,12 @@ interface PaymentGatewayProps {
   onPaymentComplete: (success: boolean, email: string) => void;
 }
 
-const paymentMethods: PaymentMethod[] = [
-  { id: 'upi', name: 'UPI', icon: 'smartphone' },
-  { id: 'card', name: 'Credit/Debit Card', icon: 'credit-card' },
-  { id: 'wallet', name: 'Digital Wallet', icon: 'wallet' },
-];
-
 const PaymentGateway: React.FC<PaymentGatewayProps> = ({
   selectedGirl,
   selectedPlan,
   onBack,
   onPaymentComplete,
 }) => {
-  const [selectedMethod, setSelectedMethod] = useState<string>('upi');
   const [email, setEmail] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [showUpiOptions, setShowUpiOptions] = useState<boolean>(false);
@@ -65,36 +58,8 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
     }, 10000); // Wait 10 seconds for user to complete payment
   };
 
-  const handlePayment = async () => {
-    if (!email) {
-      alert('Please enter your email address');
-      return;
-    }
-
-    if (selectedMethod === 'upi') {
-      setShowUpiOptions(true);
-    } else {
-      // For card and wallet, simulate processing
-      setIsProcessing(true);
-      setTimeout(() => {
-        const isSuccess = Math.random() > 0.2;
-        setIsProcessing(false);
-        onPaymentComplete(isSuccess, email);
-      }, 3000);
-    }
-  };
-
-  const getIcon = (iconType: string) => {
-    switch (iconType) {
-      case 'smartphone':
-        return <Smartphone className="w-6 h-6" />;
-      case 'credit-card':
-        return <CreditCard className="w-6 h-6" />;
-      case 'wallet':
-        return <Wallet className="w-6 h-6" />;
-      default:
-        return <CreditCard className="w-6 h-6" />;
-    }
+  const handlePayment = () => {
+    setShowUpiOptions(true);
   };
 
   return (
@@ -126,65 +91,37 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
           </div>
 
           <div className="space-y-6">
-            <div>
-              <label className="block text-white font-semibold mb-3">
-                Choose Payment Method
-              </label>
-              <div className="grid gap-3">
-                {paymentMethods.map((method) => (
-                  <label
-                    key={method.id}
-                    className={`flex items-center p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                      selectedMethod === method.id
-                        ? 'border-pink-500 bg-pink-500/10'
-                        : 'border-gray-600 hover:border-pink-500/50'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="paymentMethod"
-                      value={method.id}
-                      checked={selectedMethod === method.id}
-                      onChange={(e) => setSelectedMethod(e.target.value)}
-                      className="sr-only"
-                    />
-                    <div className="text-pink-500 mr-3">
-                      {getIcon(method.icon)}
-                    </div>
-                    <span className="text-white font-medium">{method.name}</span>
-                  </label>
-                ))}
+            <div className="bg-gray-800 p-6 rounded-lg border border-pink-500/20">
+              <div className="flex items-center justify-center mb-4">
+                <Smartphone className="w-8 h-8 text-pink-500 mr-3" />
+                <h3 className="text-white font-semibold text-xl">UPI Payment</h3>
               </div>
-            </div>
-
-            {selectedMethod === 'upi' && (
-              <div className="bg-gray-800 p-4 rounded-lg border border-pink-500/20">
-                <p className="text-white font-semibold mb-2">UPI Payment Details</p>
-                <p className="text-gray-300 mb-2">UPI ID:</p>
-                <div className="bg-black p-3 rounded-lg">
-                  <p className="text-pink-400 font-mono text-lg text-center">{upiId}</p>
-                </div>
-                <p className="text-gray-400 text-sm mt-2">
+              <p className="text-gray-300 text-center mb-4">
+                Pay securely using any UPI app
+              </p>
+              <div className="bg-black p-4 rounded-lg">
+                <p className="text-gray-400 text-sm mb-1">UPI ID:</p>
+                <p className="text-pink-400 font-mono text-lg text-center">{upiId}</p>
+                <p className="text-gray-400 text-sm mt-2 text-center">
                   Amount: ₹{amount}
                 </p>
               </div>
-            )}
+            </div>
 
             <div>
               <label className="block text-white font-semibold mb-2">
-                Email Address (for notifications)
+                Email Address <span className="text-gray-400 text-sm font-normal">(optional - for notifications)</span>
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="Enter your email (optional)"
                 className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-pink-500 focus:outline-none"
-                required
               />
             </div>
 
-            {showUpiOptions && selectedMethod === 'upi' ? (
+            {showUpiOptions ? (
               <div className="space-y-4">
                 <h3 className="text-white font-semibold text-center mb-4">Choose UPI App</h3>
                 <div className="grid grid-cols-1 gap-3">
@@ -246,18 +183,16 @@ const PaymentGateway: React.FC<PaymentGatewayProps> = ({
             ) : (
               <button
                 onClick={handlePayment}
-                disabled={isProcessing || !email}
-                className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-bold py-4 rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isProcessing}
+                className="w-full bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-bold py-4 rounded-lg transition-all duration-300 disabled:opacity-50"
               >
                 {isProcessing ? (
                   <div className="flex items-center justify-center">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-2"></div>
                     Processing Payment...
                   </div>
-                ) : selectedMethod === 'upi' ? (
-                  `Continue with UPI - ₹${amount}`
                 ) : (
-                  `Pay ₹${amount}`
+                  `Pay with UPI - ₹${amount}`
                 )}
               </button>
             )}
