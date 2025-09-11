@@ -13,9 +13,9 @@ const LandingVideo: React.FC<LandingVideoProps> = ({ onUnlock }) => {
       <div className="relative w-full h-full overflow-hidden">
         <iframe
           id="landing-video"
-          src="https://www.youtube.com/embed/BR-B3PkFm7s?autoplay=1&mute=0&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&loop=1&playlist=BR-B3PkFm7s&enablejsapi=1&disablekb=1&fs=0&cc_load_policy=0&cc_lang_pref=en&widget_referrer=https%3A%2F%2Fgf99.in"
+          src="https://www.youtube.com/embed/BR-B3PkFm7s?autoplay=1&mute=0&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&loop=1&playlist=BR-B3PkFm7s&disablekb=1&fs=0&cc_load_policy=0&start=0&end=0&origin=https://gf99.in&enablejsapi=0"
           className="absolute top-1/2 left-1/2 w-[177.77777778vh] h-[56.25vw] min-h-full min-w-full transform -translate-x-1/2 -translate-y-1/2"
-          allow="autoplay; encrypted-media; accelerometer; gyroscope; picture-in-picture"
+          allow="autoplay; encrypted-media"
           allowFullScreen
         />
         
