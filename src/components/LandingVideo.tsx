@@ -1,41 +1,19 @@
-import React, { useEffect, useRef } from 'react';
-import { Play } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Play, Volume2, VolumeX } from 'lucide-react';
 
 interface LandingVideoProps {
   onUnlock: () => void;
 }
 
 const LandingVideo: React.FC<LandingVideoProps> = ({ onUnlock }) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isMuted, setIsMuted] = useState(true);
+  const [showControls, setShowControls] = useState(false);
 
-  useEffect(() => {
-    const video = videoRef.current;
+  const toggleMute = () => {
+    const video = document.getElementById('landing-video') as HTMLVideoElement;
     if (video) {
-      // Force play with sound
-      video.muted = false;
-      video.volume = 0.7;
-      
-      const playVideo = async () => {
-        try {
-          await video.play();
-        } catch (error) {
-          console.log('Autoplay failed, user interaction required');
-        }
-      };
-      
-      playVideo();
-    }
-  }, []);
-
-  const handleVideoClick = async () => {
-    const video = videoRef.current;
-    if (video) {
-      video.muted = false;
-      try {
-        await video.play();
-      } catch (error) {
-        console.log('Play failed');
-      }
+      video.muted = !video.muted;
+      setIsMuted(video.muted);
     }
   };
 
@@ -43,21 +21,13 @@ const LandingVideo: React.FC<LandingVideoProps> = ({ onUnlock }) => {
     <div className="fixed inset-0 z-50 bg-black">
       {/* Video Background */}
       <div className="relative w-full h-full overflow-hidden">
-        <video
-          ref={videoRef}
-          className="absolute top-1/2 left-1/2 w-full h-full object-cover transform -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full"
-          autoPlay
-          loop
-          muted={false}
-          playsInline
-          controls={false}
-          onClick={handleVideoClick}
-        >
-          <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
-          <source src="https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4" type="video/mp4" />
-          {/* Fallback for browsers that don't support video */}
-          <div className="absolute inset-0 bg-gradient-to-br from-pink-900 to-red-900"></div>
-        </video>
+        <iframe
+          id="landing-video"
+          src="https://www.youtube.com/embed/BR-B3PkFm7s?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&loop=1&playlist=BR-B3PkFm7s&enablejsapi=1&origin=https://localhost:5173"
+          className="absolute top-1/2 left-1/2 w-[177.77777778vh] h-[56.25vw] min-h-full min-w-full transform -translate-x-1/2 -translate-y-1/2"
+          allow="autoplay; encrypted-media; accelerometer; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
         
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black/40" />
@@ -108,10 +78,17 @@ const LandingVideo: React.FC<LandingVideoProps> = ({ onUnlock }) => {
             <p className="text-white/80 text-sm">
               Premium AI Companions • Secure & Private • Instant Activation
             </p>
-            <p className="text-pink-400 text-sm mt-2">
-              🔊 Click anywhere on video to enable sound
-            </p>
           </div>
+        </div>
+
+        {/* Video Controls */}
+        <div className="absolute bottom-6 right-6">
+          <button
+            onClick={toggleMute}
+            className="bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors"
+          >
+            {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+          </button>
         </div>
       </div>
     </div>
