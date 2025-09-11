@@ -1,25 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { Play } from 'lucide-react';
+import { Play, Volume2, VolumeX } from 'lucide-react';
 
 interface LandingVideoProps {
   onUnlock: () => void;
 }
 
 const LandingVideo: React.FC<LandingVideoProps> = ({ onUnlock }) => {
-  useEffect(() => {
-    // Force video to play after component mounts
-    const timer = setTimeout(() => {
-      const iframe = document.getElementById('landing-video') as HTMLIFrameElement;
-      if (iframe) {
-        // Reload iframe to trigger autoplay
-        const src = iframe.src;
-        iframe.src = '';
-        iframe.src = src;
-      }
-    }, 100);
+  const [isMuted, setIsMuted] = useState(true);
+  const [showControls, setShowControls] = useState(false);
 
-    return () => clearTimeout(timer);
-  }, []);
+  const toggleMute = () => {
+    const video = document.getElementById('landing-video') as HTMLVideoElement;
+    if (video) {
+      video.muted = !video.muted;
+      setIsMuted(video.muted);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 bg-black">
@@ -27,11 +23,10 @@ const LandingVideo: React.FC<LandingVideoProps> = ({ onUnlock }) => {
       <div className="relative w-full h-full overflow-hidden">
         <iframe
           id="landing-video"
-          src="https://www.youtube.com/embed/BR-B3PkFm7s?autoplay=1&mute=0&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&loop=1&playlist=BR-B3PkFm7s&disablekb=1&fs=0&cc_load_policy=0&start=0&end=0&enablejsapi=1&origin=https://gf99.in&widget_referrer=https://gf99.in"
+          src="https://www.youtube.com/embed/BR-B3PkFm7s?autoplay=1&mute=1&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1&loop=1&playlist=BR-B3PkFm7s&enablejsapi=1&origin=https://localhost:5173"
           className="absolute top-1/2 left-1/2 w-[177.77777778vh] h-[56.25vw] min-h-full min-w-full transform -translate-x-1/2 -translate-y-1/2"
           allow="autoplay; encrypted-media; accelerometer; gyroscope; picture-in-picture"
           allowFullScreen
-          loading="eager"
         />
         
         {/* Dark Overlay */}
@@ -84,6 +79,16 @@ const LandingVideo: React.FC<LandingVideoProps> = ({ onUnlock }) => {
               Premium AI Companions • Secure & Private • Instant Activation
             </p>
           </div>
+        </div>
+
+        {/* Video Controls */}
+        <div className="absolute bottom-6 right-6">
+          <button
+            onClick={toggleMute}
+            className="bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-colors"
+          >
+            {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+          </button>
         </div>
       </div>
     </div>
