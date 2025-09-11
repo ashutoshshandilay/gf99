@@ -13,9 +13,7 @@ import { Girl, SubscriptionPlan } from './types';
 type AppState = 'home' | 'payment' | 'queue';
 
 function App() {
-  const [showLanding, setShowLanding] = useState(() => {
-    return !localStorage.getItem('gf99_visited');
-  });
+  const [showLanding, setShowLanding] = useState(true);
   const [currentState, setCurrentState] = useState<AppState>('home');
   const [selectedGirl, setSelectedGirl] = useState<Girl | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan | null>(null);
@@ -26,7 +24,6 @@ function App() {
   const [legalPage, setLegalPage] = useState<'refund' | 'terms' | 'privacy' | 'disclaimer' | null>(null);
 
   const handleUnlockNow = () => {
-    localStorage.setItem('gf99_visited', 'true');
     setShowLanding(false);
   };
 
